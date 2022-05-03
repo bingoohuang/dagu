@@ -13,12 +13,12 @@ Dagu executes [DAGs (Directed acyclic graph)](https://en.wikipedia.org/wiki/Dire
 ## Contents
 - [Dagu](#dagu)
   - [Contents](#contents)
-  - [Why not existing tools, like Airflow or Prefect?](#why-not-existing-tools-like-airflow-or-prefect)
+  - [Why not Airflow or Prefect?](#why-not-airflow-or-prefect)
   - [️How does it work?](#️how-does-it-work)
   - [️Quick start](#️quick-start)
     - [1. Installation](#1-installation)
     - [2. Download an example YAML file](#2-download-an-example-yaml-file)
-    - [3. Launch web server](#3-launch-web-server)
+    - [3. Launch the web UI](#3-launch-the-web-ui)
     - [4. Running the example](#4-running-the-example)
   - [Command usage](#command-usage)
   - [Web interface](#web-interface)
@@ -37,18 +37,18 @@ Dagu executes [DAGs (Directed acyclic graph)](https://en.wikipedia.org/wiki/Dire
     - [Where is the history data stored?](#where-is-the-history-data-stored)
     - [Where is the log files stored?](#where-is-the-log-files-stored)
     - [How long will the history data be stored?](#how-long-will-the-history-data-be-stored)
-    - [Is it possible to retry a DAG from a specific step?](#is-it-possible-to-retry-a-dag-from-a-specific-step)
+    - [Is it possible to retry a workflow from a specific step?](#is-it-possible-to-retry-a-workflow-from-a-specific-step)
     - [Does it have a scheduler function?](#does-it-have-a-scheduler-function)
     - [How it can communicate with running processes?](#how-it-can-communicate-with-running-processes)
-  - [GoDoc](#godoc)
   - [License](#license)
 
 ## Why not Airflow or Prefect?
-Airflow or Prefect requires us to write Python code for workflow definitions. For my specific situation, there were hundreds of thousands of existing Perl or ShellScript codes. Adding another layer of Python would add too much complexity for us. We needed more light-weight solution. So, we developed a No-code workflow executor that doesn't require writing code. We hope that this tool will help other people in the same situation.
+
+Airflow and Prefect are great and useful tools, but they require writing Python code for workflow definitions. For my specific situation, there were hundreds of thousands lines of existing Perl or ShellScript codes. Adding another layer of Python would add too much complexity for us. We needed more light-weight solution. So, we developed a No-code workflow executor that doesn't require writing code. We hope that this tool will help other people in the same situation.
 
 ## ️How does it work?
 
-- Dagu is a single command and it uses the file system to stores data in JSON format. Therefore, no DBMS or cloud service is required.
+- Dagu is a single command and it uses the file system to store data in JSON format. Therefore, no DBMS or cloud service is required.
 - Dagu executes DAGs defined in declarative YAML format. Existing programs can be used without any modification.
 
 ## ️Quick start
@@ -61,9 +61,9 @@ Download the latest binary from the [Releases page](https://github.com/dagu/dagu
 
 Download this [example YAML](https://github.com/yohamta/dagu/blob/main/examples/complex_dag.yaml) and place it in the current directory with extension `*.yaml`.
 
-### 3. Launch web server
+### 3. Launch the web UI
 
-Start the server with `dagu server` and browse to `http://localhost:8000` to explore the Web UI.
+Start the server with `dagu server` and browse to `http://127.0.0.1:8000` to explore the Web UI.
 
 ### 4. Running the example
 
@@ -82,7 +82,7 @@ You can start the example by pressing `Start` on the UI.
 
 ## Web interface
 
-You can launch web UI by `dagu server` command. Default URL is `http://localhost:8000`.
+You can launch the web UI by `dagu server` command. Default URL is `http://127.0.0.1:8000`.
 
 - **DAGs**: Overview of all DAGs (workflows).
 
@@ -129,7 +129,7 @@ steps:
 
 ### Using parameters
 
-Parameters can be defined using `params` field. Each parameter can be referenced as $1, $2, etc. Parameters can also be command substitutions or environment variables. You can override the parameters with the `--params=` parameter for `start` command.
+Parameters can be defined using `params` field. Each parameter can be referenced as $1, $2, etc. Parameters can also be command substitutions or environment variables. It can be overriden by `--params=` parameter of `start` command.
 
 ```yaml
 name: example
@@ -184,7 +184,7 @@ handlerOn:                           # Handler on Success, Failure, Cancel, Exit
   exit:                              
     command: "echo finished"         # Command to execute when the DAG execution finished
 steps:
-  - name: som task                   # Step's name
+  - name: some task                  # Step's name
     description: some task           # Step's description
     dir: ${HOME}/logs                # Working directory
     command: python main.py $1       # Command and parameters
@@ -204,7 +204,7 @@ steps:
         expected: "1"                # Expected Value for the condition
 ```
 
-The global configuration file `~/.dagu/config.yaml` is useful to gather common settings, such as the directory to write log files.
+The global configuration file `~/.dagu/config.yaml` is useful to gather common settings, such as `logDir` or `env`.
 
 ## Admin configuration
 
@@ -219,7 +219,7 @@ Please create `~/.dagu/admin.yaml`.
 
 ```yaml
 host: <hostname for web UI address>                          # default value is 127.0.0.1 
-port: <port number for web UI address>                       # default value is 8080
+port: <port number for web UI address>                       # default value is 8000
 dags: <the location of DAG configuration files>              # default value is current working directory
 command: <Absolute path to the dagu binary>                  # [optional] required if the dagu command not in $PATH
 isBasicAuth: <true|false>                                    # [optional] basic auth config
@@ -259,31 +259,28 @@ Dagu's history data will be stored in the path of `DAGU__DATA` environment varia
 
 ### Where is the log files stored?
 
-Log files are stored in the path of the `DAGU__LOGS` environment variable. The default location is `$HOME/.dagu/logs`. You can override this setting by `logDir` option in a YAML file.
+Log files are stored in the path of the `DAGU__LOGS` environment variable. The default location is `$HOME/.dagu/logs`. This setting can be overridden by `logDir` option in a YAML file.
 
 ### How long will the history data be stored?
 
-The default retention period for execution history is 7 days. This setting can be changed with `histRetentionDays` option in a YAML file.
+The default retention period for execution history is 7 days. This setting can be changed by `histRetentionDays` option in a YAML file.
 
-### Is it possible to retry a DAG from a specific step?
+### Is it possible to retry a workflow from a specific step?
 
-You can change the status of any task to a `failed` status. Then, when the job is retried, the tasks after the failed node will be executed.
+You can change the status of any task to a `failed` status. Then, when the workflow is retried, the task and any subsequent tasks will be executed.
 
 ![Update Status](https://user-images.githubusercontent.com/1475839/166289470-f4af7e14-28f1-45bd-8c32-59cd59d2d583.png)
 
 ### Does it have a scheduler function?
 
-No, there is no scheduler functionality so far. It is intended to be used with cron.
+No, it doesn't have scheduler functionality. Dagu is intended to be used with cron.
 
 ### How it can communicate with running processes?
 
 Dagu uses unix sockets to communicate with running processes.
 
-![dagu Architecture](https://user-images.githubusercontent.com/1475839/166124202-e0deeded-c4ce-4a96-982c-498cf8db9118.png)
-
-## GoDoc
-
-https://pkg.go.dev/github.com/yohamta/dagu
+![dagu Architecture](https://user-images.githubusercontent.com/1475839/166390371-00bb4af0-3689-406a-a4d5-af943a1fd2ce.png)
 
 ## License
+
 This project is licensed under the GNU GPLv3 - see the [LICENSE.md](LICENSE.md) file for details
