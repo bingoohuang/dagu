@@ -65,9 +65,7 @@ func (svr *server) setupHandler() {
 	svr.admin.addRoute(http.MethodPost, `^/shutdown$`, svr.handleShutdown)
 	handler := requestLogger(svr.admin)
 	if svr.config.IsBasicAuth {
-		handler = basicAuth(handler,
-			svr.config.BasicAuthUsername,
-			svr.config.BasicAuthPassword)
+		handler = basicAuth(handler, svr.config.BasicAuthUsername, svr.config.BasicAuthPassword)
 	}
 	svr.server.Handler = handler
 }

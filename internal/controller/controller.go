@@ -39,8 +39,7 @@ func GetDAGs(dir string) (dags []*DAG, errs []string, err error) {
 	fis, err := ioutil.ReadDir(dir)
 	utils.LogIgnoreErr("read DAGs directory", err)
 	for _, fi := range fis {
-		ex := filepath.Ext(fi.Name())
-		if ex == ".yaml" || ex == ".yml" {
+		if ex := filepath.Ext(fi.Name()); ex == ".yaml" || ex == ".yml" {
 			dag, err := fromConfig(filepath.Join(dir, fi.Name()), true)
 			utils.LogIgnoreErr("read DAG config", err)
 			if dag != nil {
@@ -65,19 +64,19 @@ func New(cfg *config.Config) Controller {
 	}
 }
 
-func (c *controller) Stop() error {
-	client := sock.Client{Addr: sock.GetSockAddr(c.cfg.ConfigPath)}
+func (s *controller) Stop() error {
+	client := sock.Client{Addr: sock.GetSockAddr(s.cfg.ConfigPath)}
 	_, err := client.Request("POST", "/stop")
 	return err
 }
 
-func (c *controller) Start(bin string, workDir string, params string) (err error) {
+func (s *controller) Start(bin string, workDir string, params string) (err error) {
 	go func() {
 		args := []string{"start"}
 		if params != "" {
 			args = append(args, fmt.Sprintf("--params=\"%s\"", params))
 		}
-		args = append(args, c.cfg.ConfigPath)
+		args = append(args, s.cfg.ConfigPath)
 		cmd := exec.Command(bin, args...)
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true, Pgid: 0}
 		cmd.Dir = workDir
@@ -90,11 +89,11 @@ func (c *controller) Start(bin string, workDir string, params string) (err error
 	return
 }
 
-func (c *controller) Retry(bin string, workDir string, reqId string) (err error) {
+func (s *controller) Retry(bin string, workDir string, reqId string) (err error) {
 	go func() {
 		args := []string{"retry"}
 		args = append(args, fmt.Sprintf("--req=%s", reqId))
-		args = append(args, c.cfg.ConfigPath)
+		args = append(args, s.cfg.ConfigPath)
 		cmd := exec.Command(bin, args...)
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true, Pgid: 0}
 		cmd.Dir = workDir
@@ -113,9 +112,9 @@ func (s *controller) GetStatus() (*models.Status, error) {
 	if err != nil {
 		if errors.Is(err, sock.ErrTimeout) {
 			return nil, err
-		} else {
-			return defaultStatus(s.cfg), nil
 		}
+
+		return defaultStatus(s.cfg), nil
 	}
 	return models.StatusFromJson(ret)
 }

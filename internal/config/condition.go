@@ -46,8 +46,7 @@ func EvalCondition(c *Condition) error {
 
 func EvalConditions(cond []*Condition) error {
 	for _, c := range cond {
-		err := EvalCondition(c)
-		if err != nil {
+		if err := EvalCondition(c); err != nil {
 			return err
 		}
 	}

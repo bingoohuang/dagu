@@ -19,8 +19,8 @@ func newStatusCommand() *cli.Command {
 		Name:  "status",
 		Usage: "dagu status <config>",
 		Action: func(c *cli.Context) error {
-			config_file_path := c.Args().Get(0)
-			cfg, err := cl.Load(config_file_path, "")
+			configFilePath := c.Args().Get(0)
+			cfg, err := cl.Load(configFilePath, "")
 			if err != nil {
 				return err
 			}

@@ -36,7 +36,7 @@ type ContinueOn struct {
 }
 
 func (s *Step) String() string {
-	vals := []string{}
+	var vals []string
 	vals = append(vals, fmt.Sprintf("Name: %s", s.Name))
 	vals = append(vals, fmt.Sprintf("Dir: %s", s.Dir))
 	vals = append(vals, fmt.Sprintf("Command: %s", s.Command))

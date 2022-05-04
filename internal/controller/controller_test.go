@@ -103,9 +103,9 @@ func TestUpdateStatus(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, 1, len(st.Nodes))
-	require.Equal(t, scheduler.NodeStatus_Success, st.Nodes[0].Status)
+	require.Equal(t, scheduler.NodeStatusSuccess, st.Nodes[0].Status)
 
-	st.Nodes[0].Status = scheduler.NodeStatus_Error
+	st.Nodes[0].Status = scheduler.NodeStatusError
 	err = controller.New(dag.Config).UpdateStatus(st)
 	require.NoError(t, err)
 
@@ -113,7 +113,7 @@ func TestUpdateStatus(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, 1, len(st.Nodes))
-	require.Equal(t, scheduler.NodeStatus_Error, updated.Nodes[0].Status)
+	require.Equal(t, scheduler.NodeStatusError, updated.Nodes[0].Status)
 }
 
 func TestUpdateStatusError(t *testing.T) {
@@ -138,7 +138,7 @@ func TestUpdateStatusError(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, scheduler.SchedulerStatus_Running, st.Status)
 
-	st.Nodes[0].Status = scheduler.NodeStatus_Error
+	st.Nodes[0].Status = scheduler.NodeStatusError
 	err = c.UpdateStatus(st)
 	require.Error(t, err)
 

@@ -111,7 +111,7 @@ func TestPreConditionInvalid(t *testing.T) {
 
 	assert.Equal(t, scheduler.SchedulerStatus_Cancel, status.Status)
 	for _, s := range status.Nodes {
-		assert.Equal(t, scheduler.NodeStatus_Cancel, s.Status)
+		assert.Equal(t, scheduler.NodeStatusCancel, s.Status)
 	}
 }
 
@@ -130,7 +130,7 @@ func TestPreConditionValid(t *testing.T) {
 
 	assert.Equal(t, scheduler.SchedulerStatus_Success, status.Status)
 	for _, s := range status.Nodes {
-		assert.Equal(t, scheduler.NodeStatus_Success, s.Status)
+		assert.Equal(t, scheduler.NodeStatusSuccess, s.Status)
 	}
 }
 
@@ -142,9 +142,9 @@ func TestOnExit(t *testing.T) {
 
 	assert.Equal(t, scheduler.SchedulerStatus_Success, status.Status)
 	for _, s := range status.Nodes {
-		assert.Equal(t, scheduler.NodeStatus_Success, s.Status)
+		assert.Equal(t, scheduler.NodeStatusSuccess, s.Status)
 	}
-	assert.Equal(t, scheduler.NodeStatus_Success, status.OnExit.Status)
+	assert.Equal(t, scheduler.NodeStatusSuccess, status.OnExit.Status)
 }
 
 func TestRetry(t *testing.T) {
@@ -173,8 +173,8 @@ func TestRetry(t *testing.T) {
 	assert.Equal(t, scheduler.SchedulerStatus_Success, status.Status)
 
 	for _, n := range status.Nodes {
-		if n.Status != scheduler.NodeStatus_Success &&
-			n.Status != scheduler.NodeStatus_Skipped {
+		if n.Status != scheduler.NodeStatusSuccess &&
+			n.Status != scheduler.NodeStatusSkipped {
 			t.Errorf("invalid status: %s", n.Status.String())
 		}
 	}

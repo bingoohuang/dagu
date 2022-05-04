@@ -13,10 +13,10 @@ import (
 type dagListResponse struct {
 	Title    string
 	Charset  string
-	DAGs     []*controller.DAG
-	Groups   []*group
+	DAGs     []*controller.DAG `json:",nilasempty"`
+	Groups   []*group          `json:",nilasempty"`
 	Group    string
-	Errors   []string
+	Errors   []string `json:",nilasempty"`
 	HasError bool
 }
 
@@ -44,7 +44,7 @@ func HandleGetList(hc *DAGListHandlerConfig) http.HandlerFunc {
 			return
 		}
 
-		groups := []*group{}
+		var groups []*group
 		if params.Group == "" {
 			groups, err = listGroups(dir)
 			if err != nil {
@@ -91,7 +91,7 @@ func getGetListParameter(r *http.Request) *dagListParameter {
 }
 
 func listGroups(dir string) ([]*group, error) {
-	ret := []*group{}
+	var ret []*group
 	if !utils.FileExists(dir) {
 		return ret, nil
 	}

@@ -30,60 +30,60 @@ func TestRetryExecution(t *testing.T) {
 		{
 			Step: &config.Step{Name: "1", Command: "true"},
 			NodeState: scheduler.NodeState{
-				Status: scheduler.NodeStatus_Success,
+				Status: scheduler.NodeStatusSuccess,
 			},
 		},
 		{
 			Step: &config.Step{Name: "2", Command: "true", Depends: []string{"1"}},
 			NodeState: scheduler.NodeState{
-				Status: scheduler.NodeStatus_Error,
+				Status: scheduler.NodeStatusError,
 			},
 		},
 		{
 			Step: &config.Step{Name: "3", Command: "true", Depends: []string{"2"}},
 			NodeState: scheduler.NodeState{
-				Status: scheduler.NodeStatus_Cancel,
+				Status: scheduler.NodeStatusCancel,
 			},
 		},
 		{
 			Step: &config.Step{Name: "4", Command: "true", Depends: []string{}},
 			NodeState: scheduler.NodeState{
-				Status: scheduler.NodeStatus_Skipped,
+				Status: scheduler.NodeStatusSkipped,
 			},
 		},
 		{
 			Step: &config.Step{Name: "5", Command: "true", Depends: []string{"4"}},
 			NodeState: scheduler.NodeState{
-				Status: scheduler.NodeStatus_Error,
+				Status: scheduler.NodeStatusError,
 			},
 		},
 		{
 			Step: &config.Step{Name: "6", Command: "true", Depends: []string{"5"}},
 			NodeState: scheduler.NodeState{
-				Status: scheduler.NodeStatus_Success,
+				Status: scheduler.NodeStatusSuccess,
 			},
 		},
 		{
 			Step: &config.Step{Name: "7", Command: "true", Depends: []string{"6"}},
 			NodeState: scheduler.NodeState{
-				Status: scheduler.NodeStatus_Skipped,
+				Status: scheduler.NodeStatusSkipped,
 			},
 		},
 		{
 			Step: &config.Step{Name: "8", Command: "true", Depends: []string{}},
 			NodeState: scheduler.NodeState{
-				Status: scheduler.NodeStatus_Skipped,
+				Status: scheduler.NodeStatusSkipped,
 			},
 		},
 	}
 	_, err := scheduler.RetryExecutionGraph(nodes...)
 	require.NoError(t, err)
-	assert.Equal(t, scheduler.NodeStatus_Success, nodes[0].Status)
-	assert.Equal(t, scheduler.NodeStatus_None, nodes[1].Status)
-	assert.Equal(t, scheduler.NodeStatus_None, nodes[2].Status)
-	assert.Equal(t, scheduler.NodeStatus_Skipped, nodes[3].Status)
-	assert.Equal(t, scheduler.NodeStatus_None, nodes[4].Status)
-	assert.Equal(t, scheduler.NodeStatus_None, nodes[5].Status)
-	assert.Equal(t, scheduler.NodeStatus_None, nodes[6].Status)
-	assert.Equal(t, scheduler.NodeStatus_Skipped, nodes[7].Status)
+	assert.Equal(t, scheduler.NodeStatusSuccess, nodes[0].Status)
+	assert.Equal(t, scheduler.NodeStatusNone, nodes[1].Status)
+	assert.Equal(t, scheduler.NodeStatusNone, nodes[2].Status)
+	assert.Equal(t, scheduler.NodeStatusSkipped, nodes[3].Status)
+	assert.Equal(t, scheduler.NodeStatusNone, nodes[4].Status)
+	assert.Equal(t, scheduler.NodeStatusNone, nodes[5].Status)
+	assert.Equal(t, scheduler.NodeStatusNone, nodes[6].Status)
+	assert.Equal(t, scheduler.NodeStatusSkipped, nodes[7].Status)
 }

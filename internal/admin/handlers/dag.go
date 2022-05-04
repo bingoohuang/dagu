@@ -61,12 +61,12 @@ type stepLog struct {
 type dagTabType int
 
 const (
-	DAG_TabType_Status dagTabType = iota
-	DAG_TabType_Config
-	DAG_TabType_History
-	DAG_TabType_StepLog
-	DAG_TabType_ScLog
-	DAG_TabType_None
+	DagTabtypeStatus dagTabType = iota
+	DagTabtypeConfig
+	DagTabtypeHistory
+	DagTabtypeSteplog
+	DagTabtypeSclog
+	DagTabtypeNone
 )
 
 type dagParameter struct {
@@ -113,19 +113,19 @@ func HandleGetDAG(hc *DAGHandlerConfig) http.HandlerFunc {
 		data := newDAGResponse(cfg, dag, params.Tab, params.Group)
 
 		switch params.Tab {
-		case DAG_TabType_Status:
-			data.Graph = models.StepGraph(dag.Status.Nodes, params.Tab != DAG_TabType_Config)
+		case DagTabtypeStatus:
+			data.Graph = models.StepGraph(dag.Status.Nodes, params.Tab != DagTabtypeConfig)
 
-		case DAG_TabType_Config:
+		case DagTabtypeConfig:
 			steps := models.FromSteps(dag.Config.Steps)
-			data.Graph = models.StepGraph(steps, params.Tab != DAG_TabType_Config)
+			data.Graph = models.StepGraph(steps, params.Tab != DagTabtypeConfig)
 			data.Definition, _ = config.ReadConfig(path.Join(hc.DAGsDir, params.Group, cfg))
 
-		case DAG_TabType_History:
+		case DagTabtypeHistory:
 			logs := controller.New(dag.Config).GetStatusHist(30)
 			data.LogData = buildLog(logs)
 
-		case DAG_TabType_StepLog:
+		case DagTabtypeSteplog:
 			if isJsonRequest(r) {
 				data.StepLog, err = readStepLog(c, params.File, params.Step, hc.LogEncodingCharset)
 				if err != nil {
@@ -134,7 +134,7 @@ func HandleGetDAG(hc *DAGHandlerConfig) http.HandlerFunc {
 				}
 			}
 
-		case DAG_TabType_ScLog:
+		case DagTabtypeSclog:
 			if isJsonRequest(r) {
 				data.ScLog, err = readSchedulerLog(c, params.File)
 				if err != nil {
@@ -243,7 +243,7 @@ func HandlePostDAGAction(hc *PostDAGHandlerConfig) http.HandlerFunc {
 				return
 			}
 
-			err = updateStatus(c, reqId, step, scheduler.NodeStatus_Success)
+			err = updateStatus(c, reqId, step, scheduler.NodeStatusSuccess)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				w.Write([]byte(err.Error()))
@@ -267,7 +267,7 @@ func HandlePostDAGAction(hc *PostDAGHandlerConfig) http.HandlerFunc {
 				return
 			}
 
-			err = updateStatus(c, reqId, step, scheduler.NodeStatus_Error)
+			err = updateStatus(c, reqId, step, scheduler.NodeStatusError)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				w.Write([]byte(err.Error()))
@@ -456,13 +456,13 @@ func getPathParameter(r *http.Request) (string, error) {
 
 func getDAGParameter(r *http.Request) *dagParameter {
 	p := &dagParameter{
-		Tab:   DAG_TabType_Status,
+		Tab:   DagTabtypeStatus,
 		Group: "",
 	}
 	if tab, ok := r.URL.Query()["t"]; ok {
 		i, err := strconv.Atoi(tab[0])
-		if err != nil || i >= int(DAG_TabType_None) {
-			p.Tab = DAG_TabType_Status
+		if err != nil || i >= int(DagTabtypeNone) {
+			p.Tab = DagTabtypeStatus
 		} else {
 			p.Tab = dagTabType(i)
 		}

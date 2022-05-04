@@ -15,7 +15,6 @@ type Loader struct{}
 
 func DefaultConfig() *Config {
 	c := &Config{}
-	c.Init()
 	c.setup()
 	return c
 }

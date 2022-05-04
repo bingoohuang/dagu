@@ -79,7 +79,6 @@ func (cl *Loader) loadConfig(f, params string, headOnly bool) (*Config, error) {
 
 	if dst == nil {
 		dst = &Config{}
-		dst.Init()
 	}
 
 	raw, err := cl.load(file)
@@ -117,7 +116,7 @@ func (cl *Loader) loadConfig(f, params string, headOnly bool) (*Config, error) {
 }
 
 func (cl *Loader) merge(dst, src *Config) error {
-	return mergo.MergeWithOverwrite(dst, src)
+	return mergo.Merge(dst, src, mergo.WithOverride)
 }
 
 func (cl *Loader) load(file string) (config map[string]interface{}, err error) {

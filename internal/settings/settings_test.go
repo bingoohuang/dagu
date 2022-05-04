@@ -27,11 +27,11 @@ func TestReadSetting(t *testing.T) {
 		Want string
 	}{
 		{
-			Name: CONFIG__DATA_DIR,
+			Name: ConfigDataDir,
 			Want: path.Join(testHomeDir, ".dagu/data"),
 		},
 		{
-			Name: CONFIG__LOGS_DIR,
+			Name: ConfigLogsDir,
 			Want: path.Join(testHomeDir, ".dagu/logs"),
 		},
 	} {
@@ -46,11 +46,11 @@ func TestReadSetting(t *testing.T) {
 		Want string
 	}{
 		{
-			Name: CONFIG__DATA_DIR,
+			Name: ConfigDataDir,
 			Want: "/home/dagu/data",
 		},
 		{
-			Name: CONFIG__LOGS_DIR,
+			Name: ConfigLogsDir,
 			Want: "/home/dagu/logs",
 		},
 	} {

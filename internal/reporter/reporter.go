@@ -23,10 +23,10 @@ type Config struct {
 
 func (rp *Reporter) ReportStep(cfg *config.Config, status *models.Status, node *scheduler.Node) error {
 	st := node.ReadStatus()
-	if st != scheduler.NodeStatus_None {
+	if st != scheduler.NodeStatusNone {
 		log.Printf("%s %s", node.Name, status.StatusText)
 	}
-	if st == scheduler.NodeStatus_Error && node.MailOnError {
+	if st == scheduler.NodeStatusError && node.MailOnError {
 		return rp.Mailer.SendMail(
 			cfg.ErrorMail.From,
 			[]string{cfg.ErrorMail.To},
@@ -96,7 +96,7 @@ func renderTable(nodes []*models.Node) string {
 	t.AppendHeader(table.Row{"#", "Step", "Started At", "Finished At", "Status", "Command", "Error"})
 	for i, n := range nodes {
 		var command = n.Command
-		if n.Args != nil {
+		if len(n.Args) > 0 {
 			command = strings.Join([]string{n.Command, strings.Join(n.Args, " ")}, " ")
 		}
 		t.AppendRow(table.Row{
@@ -135,7 +135,7 @@ func renderHTML(nodes []*models.Node) string {
 	addStatusFunc := func(status scheduler.NodeStatus) {
 		style := ""
 		switch status {
-		case scheduler.NodeStatus_Error:
+		case scheduler.NodeStatusError:
 			style = "color: #D01117;font-weight:bold;"
 		}
 		buffer.WriteString(

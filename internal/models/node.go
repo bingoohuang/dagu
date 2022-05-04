@@ -70,7 +70,7 @@ func FromNodes(nodes []*scheduler.Node) []*Node {
 }
 
 func FromSteps(steps []*config.Step) []*Node {
-	ret := []*Node{}
+	var ret []*Node
 	for _, s := range steps {
 		ret = append(ret, fromStepWithDefValues(s))
 	}
@@ -84,15 +84,15 @@ func StepGraph(steps []*Node, displayStatus bool) string {
 		buf.WriteString(fmt.Sprintf("%s(%s)", graphNode(s.Name), s.Name))
 		if displayStatus {
 			switch s.Status {
-			case scheduler.NodeStatus_Running:
+			case scheduler.NodeStatusRunning:
 				buf.WriteString(":::running")
-			case scheduler.NodeStatus_Error:
+			case scheduler.NodeStatusError:
 				buf.WriteString(":::error")
-			case scheduler.NodeStatus_Cancel:
+			case scheduler.NodeStatusCancel:
 				buf.WriteString(":::cancel")
-			case scheduler.NodeStatus_Success:
+			case scheduler.NodeStatusSuccess:
 				buf.WriteString(":::done")
-			case scheduler.NodeStatus_Skipped:
+			case scheduler.NodeStatusSkipped:
 				buf.WriteString(":::skipped")
 			default:
 				buf.WriteString(":::none")
@@ -127,8 +127,8 @@ func fromStepWithDefValues(s *config.Step) *Node {
 		Log:        "",
 		StartedAt:  "-",
 		FinishedAt: "-",
-		Status:     scheduler.NodeStatus_None,
-		StatusText: scheduler.NodeStatus_None.String(),
+		Status:     scheduler.NodeStatusNone,
+		StatusText: scheduler.NodeStatusNone.String(),
 		RetryCount: 0,
 	}
 	return step

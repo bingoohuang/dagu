@@ -37,7 +37,6 @@ func TestLoadConfig(t *testing.T) {
 		BasicAuthUsername:  "user",
 		BasicAuthPassword:  "password",
 		LogEncodingCharset: "utf-8",
-		Env:                []string{},
 	}, c)
 }
 

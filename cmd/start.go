@@ -25,8 +25,8 @@ func newStartCommand() *cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) error {
-			config_file_path := c.Args().Get(0)
-			cfg, err := cl.Load(config_file_path, c.String("params"))
+			configFilePath := c.Args().Get(0)
+			cfg, err := cl.Load(configFilePath, c.String("params"))
 			if err != nil {
 				return err
 			}

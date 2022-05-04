@@ -62,7 +62,7 @@ func TestReporter(t *testing.T) {
 						Command: "true",
 						Args:    []string{"param-x"},
 					},
-					Status:     scheduler.NodeStatus_Running,
+					Status:     scheduler.NodeStatusRunning,
 					StartedAt:  utils.FormatTime(time.Now()),
 					FinishedAt: utils.FormatTime(time.Now().Add(time.Minute * 10)),
 				},
@@ -172,7 +172,7 @@ func testReportStep(t *testing.T, rp *Reporter, cfg *config.Config, nodes []*mod
 		&scheduler.Node{
 			Step: cfg.Steps[0],
 			NodeState: scheduler.NodeState{
-				Status: scheduler.NodeStatus_Error,
+				Status: scheduler.NodeStatusError,
 			},
 		},
 	)

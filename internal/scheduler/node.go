@@ -17,27 +17,27 @@ import (
 type NodeStatus int
 
 const (
-	NodeStatus_None NodeStatus = iota
-	NodeStatus_Running
-	NodeStatus_Error
-	NodeStatus_Cancel
-	NodeStatus_Success
-	NodeStatus_Skipped
+	NodeStatusNone NodeStatus = iota
+	NodeStatusRunning
+	NodeStatusError
+	NodeStatusCancel
+	NodeStatusSuccess
+	NodeStatusSkipped
 )
 
 func (s NodeStatus) String() string {
 	switch s {
-	case NodeStatus_Running:
+	case NodeStatusRunning:
 		return "running"
-	case NodeStatus_Error:
+	case NodeStatusError:
 		return "failed"
-	case NodeStatus_Cancel:
+	case NodeStatusCancel:
 		return "canceled"
-	case NodeStatus_Success:
+	case NodeStatusSuccess:
 		return "finished"
-	case NodeStatus_Skipped:
+	case NodeStatusSkipped:
 		return "skipped"
-	case NodeStatus_None:
+	case NodeStatusNone:
 		fallthrough
 	default:
 		return "not started"
@@ -104,8 +104,8 @@ func (n *Node) updateStatus(status NodeStatus) {
 
 func (n *Node) signal(sig os.Signal) {
 	status := n.ReadStatus()
-	if status == NodeStatus_Running {
-		n.updateStatus(NodeStatus_Cancel)
+	if status == NodeStatusRunning {
+		n.updateStatus(NodeStatusCancel)
 	}
 	if n.cmd != nil {
 		n.cmd.Process.Signal(sig)
@@ -116,8 +116,8 @@ func (n *Node) cancel() {
 	n.mu.Lock()
 	defer n.mu.Unlock()
 	status := n.Status
-	if status == NodeStatus_None || status == NodeStatus_Running {
-		n.Status = NodeStatus_Cancel
+	if status == NodeStatusNone || status == NodeStatusRunning {
+		n.Status = NodeStatusCancel
 	}
 	if n.cancelFunc != nil {
 		n.cancelFunc()
@@ -183,7 +183,7 @@ func (n *Node) incDoneCount() {
 	n.DoneCount++
 }
 
-var nextNodeId int = 1
+var nextNodeId = 1
 
 func (n *Node) init() {
 	if n.id != 0 {
@@ -191,13 +191,4 @@ func (n *Node) init() {
 	}
 	n.id = nextNodeId
 	nextNodeId++
-	if n.Variables == nil {
-		n.Variables = []string{}
-	}
-	if n.Variables == nil {
-		n.Variables = []string{}
-	}
-	if n.Preconditions == nil {
-		n.Preconditions = []*config.Condition{}
-	}
 }

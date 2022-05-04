@@ -20,7 +20,7 @@ func Test_serverCommand(t *testing.T) {
 	os.Setenv("HOME", dir)
 
 	port := findPort(t)
-	os.Setenv(settings.CONFIG__ADMIN_PORT, port)
+	os.Setenv(settings.ConfigAdminPort, port)
 	settings.InitTest(dir)
 
 	done := make(chan struct{})

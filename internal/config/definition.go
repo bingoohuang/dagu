@@ -5,7 +5,7 @@ type configDefinition struct {
 	Description       string
 	LogDir            string
 	Env               map[string]string
-	HandlerOn         handerOnDef
+	HandlerOn         handlerOnDef
 	Steps             []*stepDef
 	Smtp              smtpConfigDef
 	MailOn            mailOnDef
@@ -24,7 +24,7 @@ type conditionDef struct {
 	Expected  string
 }
 
-type handerOnDef struct {
+type handlerOnDef struct {
 	Failure *stepDef
 	Success *stepDef
 	Cancel  *stepDef

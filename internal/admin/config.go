@@ -23,12 +23,6 @@ type Config struct {
 	LogEncodingCharset string
 }
 
-func (c *Config) Init() {
-	if c.Env == nil {
-		c.Env = []string{}
-	}
-}
-
 func (c *Config) setup() {
 	if c.Command == "" {
 		c.Command = "dagu"
@@ -44,7 +38,7 @@ func (c *Config) setup() {
 		c.Host = "127.0.0.1"
 	}
 	if c.Port == "" {
-		c.Port = settings.MustGet(settings.CONFIG__ADMIN_PORT)
+		c.Port = settings.MustGet(settings.ConfigAdminPort)
 	}
 	if len(c.Env) == 0 {
 		env := utils.DefaultEnv()
@@ -58,7 +52,6 @@ func (c *Config) setup() {
 
 func buildFromDefinition(def *configDefinition) (c *Config, err error) {
 	c = &Config{}
-	c.Init()
 
 	env, err := loadVariables(def.Env)
 	if err != nil {
@@ -114,7 +107,7 @@ func buildFromDefinition(def *configDefinition) (c *Config, err error) {
 }
 
 func buildConfigEnv(vars map[string]string) []string {
-	ret := []string{}
+	var ret []string
 	for k, v := range vars {
 		ret = append(ret, fmt.Sprintf("%s=%s", k, v))
 	}

@@ -16,8 +16,8 @@ func basicAuth(next http.Handler, expectedUsername, expectedPassword string) htt
 				passwordHash := sha256.Sum256([]byte(password))
 				expectedUsernameHash := sha256.Sum256([]byte(expectedUsername))
 				expectedPasswordHash := sha256.Sum256([]byte(expectedPassword))
-				usernameMatch := (subtle.ConstantTimeCompare(usernameHash[:], expectedUsernameHash[:]) == 1)
-				passwordMatch := (subtle.ConstantTimeCompare(passwordHash[:], expectedPasswordHash[:]) == 1)
+				usernameMatch := subtle.ConstantTimeCompare(usernameHash[:], expectedUsernameHash[:]) == 1
+				passwordMatch := subtle.ConstantTimeCompare(passwordHash[:], expectedPasswordHash[:]) == 1
 				if usernameMatch && passwordMatch {
 					next.ServeHTTP(w, r)
 					return

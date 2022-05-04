@@ -14,23 +14,23 @@ type route struct {
 
 func defaultRoutes(cfg *Config) []*route {
 	return []*route{
-		{http.MethodGet, `^/?$`, handlers.HandleGetList(
+		{method: http.MethodGet, pattern: `^/?$`, handler: handlers.HandleGetList(
 			&handlers.DAGListHandlerConfig{
 				DAGsDir: cfg.DAGs,
 			},
 		)},
-		{http.MethodGet, `^/dags/?$`, handlers.HandleGetList(
+		{method: http.MethodGet, pattern: `^/dags/?$`, handler: handlers.HandleGetList(
 			&handlers.DAGListHandlerConfig{
 				DAGsDir: cfg.DAGs,
 			},
 		)},
-		{http.MethodGet, `^/dags/([^/]+)$`, handlers.HandleGetDAG(
+		{method: http.MethodGet, pattern: `^/dags/([^/]+)$`, handler: handlers.HandleGetDAG(
 			&handlers.DAGHandlerConfig{
 				DAGsDir:            cfg.DAGs,
 				LogEncodingCharset: cfg.LogEncodingCharset,
 			},
 		)},
-		{http.MethodPost, `^/dags/([^/]+)$`, handlers.HandlePostDAGAction(
+		{method: http.MethodPost, pattern: `^/dags/([^/]+)$`, handler: handlers.HandlePostDAGAction(
 			&handlers.PostDAGHandlerConfig{
 				DAGsDir: cfg.DAGs,
 				Bin:     cfg.Command,

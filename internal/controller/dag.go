@@ -35,7 +35,6 @@ func fromConfig(file string, headOnly bool) (*DAG, error) {
 			return newDAG(cfg, nil, err), err
 		}
 		cfg := &config.Config{ConfigPath: file}
-		cfg.Init()
 		return newDAG(cfg, nil, err), err
 	}
 	status, err := New(cfg).GetLastStatus()

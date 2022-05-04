@@ -24,8 +24,7 @@ func (l *teeLogger) Open() error {
 	if err != nil {
 		return err
 	}
-	mw := io.MultiWriter(os.Stdout, l.file)
-	log.SetOutput(mw)
+	log.SetOutput(io.MultiWriter(os.Stdout, l.file))
 	return nil
 }
 

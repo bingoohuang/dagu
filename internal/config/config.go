@@ -55,26 +55,11 @@ func ReadConfig(file string) (string, error) {
 	return string(b), nil
 }
 
-func (c *Config) Init() {
-	if c.Env == nil {
-		c.Env = []string{}
-	}
-	if c.Steps == nil {
-		c.Steps = []*Step{}
-	}
-	if c.Params == nil {
-		c.Params = []string{}
-	}
-	if c.Preconditions == nil {
-		c.Preconditions = []*Condition{}
-	}
-}
-
 func (c *Config) setup(file string) {
 	c.ConfigPath = file
 	if c.LogDir == "" {
 		c.LogDir = path.Join(
-			settings.MustGet(settings.CONFIG__LOGS_DIR),
+			settings.MustGet(settings.ConfigLogsDir),
 			utils.ValidFilename(c.Name, "_"))
 	}
 	if c.HistRetentionDays == 0 {
@@ -133,7 +118,6 @@ type BuildConfigOptions struct {
 func buildFromDefinition(def *configDefinition, globalConfig *Config,
 	opts *BuildConfigOptions) (c *Config, err error) {
 	c = &Config{}
-	c.Init()
 
 	c.Name = def.Name
 	c.Description = def.Description
@@ -254,7 +238,7 @@ func parseParameters(value string, eval bool) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	ret := []string{}
+	var ret []string
 	for _, r := range records {
 		for i, v := range r {
 			err = os.Setenv(strconv.Itoa(i+1), v)
@@ -283,7 +267,7 @@ func buildMailConfigFromDefinition(def mailConfigDef) (*MailConfig, error) {
 }
 
 func buildStepsFromDefinition(variables []string, stepDefs []*stepDef) ([]*Step, error) {
-	ret := []*Step{}
+	var ret []*Step
 	for _, def := range stepDefs {
 		step, err := buildStep(variables, def)
 		if err != nil {
@@ -324,7 +308,7 @@ func buildStep(variables []string, def *stepDef) (*Step, error) {
 }
 
 func buildConfigEnv(vars map[string]string) []string {
-	ret := []string{}
+	var ret []string
 	for k, v := range vars {
 		ret = append(ret, fmt.Sprintf("%s=%s", k, v))
 	}
@@ -332,7 +316,7 @@ func buildConfigEnv(vars map[string]string) []string {
 }
 
 func loadPreCondition(cond []*conditionDef) []*Condition {
-	ret := []*Condition{}
+	var ret []*Condition
 	for _, v := range cond {
 		ret = append(ret, &Condition{
 			Condition: v.Condition,
@@ -360,20 +344,20 @@ func loadVariables(strVariables map[string]string) (map[string]string, error) {
 
 func assertDef(def *configDefinition) error {
 	if def.Name == "" {
-		return fmt.Errorf("DAG name must be specified.")
+		return fmt.Errorf("DAG name must be specified")
 	}
 	if len(def.Steps) == 0 {
-		return fmt.Errorf("at least one step must be specified.")
+		return fmt.Errorf("at least one step must be specified")
 	}
 	return nil
 }
 
 func assertStepDef(def *stepDef) error {
 	if def.Name == "" {
-		return fmt.Errorf("step name must be specified.")
+		return fmt.Errorf("step name must be specified")
 	}
 	if def.Command == "" {
-		return fmt.Errorf("step command must be specified.")
+		return fmt.Errorf("step command must be specified")
 	}
 	return nil
 }

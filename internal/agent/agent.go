@@ -3,6 +3,7 @@ package agent
 import (
 	"errors"
 	"fmt"
+	"github.com/segmentio/ksuid"
 	"log"
 	"net/http"
 	"os"
@@ -12,7 +13,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/yohamta/dagu/internal/config"
 	"github.com/yohamta/dagu/internal/constants"
 	"github.com/yohamta/dagu/internal/controller"
@@ -166,7 +166,7 @@ func (a *Agent) setupGraph() (err error) {
 }
 
 func (a *Agent) setupRetry() (err error) {
-	nodes := []*scheduler.Node{}
+	var nodes []*scheduler.Node
 	for _, n := range a.RetryConfig.Status.Nodes {
 		nodes = append(nodes, n.ToNode())
 	}
@@ -175,11 +175,7 @@ func (a *Agent) setupRetry() (err error) {
 }
 
 func (a *Agent) setupRequestId() error {
-	id, err := uuid.NewRandom()
-	if err != nil {
-		return err
-	}
-	a.requestId = id.String()
+	a.requestId = ksuid.New().String()
 	return nil
 }
 

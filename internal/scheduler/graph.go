@@ -86,16 +86,16 @@ func (g *ExecutionGraph) setupRetry() error {
 		dict[node.id] = node.Status
 		retry[node.id] = false
 	}
-	frontier := []int{}
+	var frontier []int
 	for _, node := range g.nodes {
 		if len(node.Depends) == 0 {
 			frontier = append(frontier, node.id)
 		}
 	}
 	for len(frontier) > 0 {
-		next := []int{}
+		var next []int
 		for _, u := range frontier {
-			if retry[u] == true || dict[u] == NodeStatus_Error || dict[u] == NodeStatus_Cancel {
+			if retry[u] || dict[u] == NodeStatusError || dict[u] == NodeStatusCancel {
 				log.Printf("clear node state: %s", g.dict[u].Name)
 				g.dict[u].clearState()
 				retry[u] = true
@@ -115,11 +115,11 @@ func (g *ExecutionGraph) setupRetry() error {
 func (g *ExecutionGraph) setup() error {
 	for _, node := range g.nodes {
 		for _, dep := range node.Depends {
-			dep_step, err := g.findStep(dep)
+			depStep, err := g.findStep(dep)
 			if err != nil {
 				return err
 			}
-			err = g.addEdge(dep_step, node)
+			err = g.addEdge(depStep, node)
 			if err != nil {
 				return err
 			}

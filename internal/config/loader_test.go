@@ -48,12 +48,11 @@ func TestLoadConfig(t *testing.T) {
 			},
 		},
 		{
-			Name:          "2",
-			Dir:           testDir,
-			Command:       "false",
-			Args:          []string{},
-			Variables:     testEnv,
-			Preconditions: []*Condition{},
+			Name:      "2",
+			Dir:       testDir,
+			Command:   "false",
+			Args:      []string{},
+			Variables: testEnv,
 			ContinueOn: ContinueOn{
 				Failure: true,
 				Skipped: false,
@@ -71,7 +70,7 @@ func TestLoadConfig(t *testing.T) {
 			Command:       fmt.Sprintf("%s.sh", name),
 			Args:          []string{},
 			Variables:     testEnv,
-			Preconditions: []*Condition{},
+			Preconditions: nil,
 		}
 	}
 
@@ -150,8 +149,8 @@ func TestLoadGlobalConfig(t *testing.T) {
 		Env:               testEnv,
 		LogDir:            path.Join(testHomeDir, "/logs"),
 		HistRetentionDays: 7,
-		Params:            []string{},
-		Steps:             []*Step{},
+		Params:            nil,
+		Steps:             nil,
 		Smtp: &SmtpConfig{
 			Host: "smtp.host",
 			Port: "25",
@@ -166,12 +165,12 @@ func TestLoadGlobalConfig(t *testing.T) {
 			To:     "info@mail.com",
 			Prefix: "[INFO]",
 		},
-		Preconditions: []*Condition{},
+		Preconditions: nil,
 	}
 	assert.Equal(t, want, cfg)
 }
 
-func TestLoadDeafult(t *testing.T) {
+func TestLoadDefault(t *testing.T) {
 	l := &Loader{
 		HomeDir: utils.MustGetUserHomeDir(),
 	}

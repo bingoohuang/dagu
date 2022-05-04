@@ -35,7 +35,7 @@ func New(config *Config) *Database {
 
 func DefaultConfig() *Config {
 	return &Config{
-		Dir: settings.MustGet(settings.CONFIG__DATA_DIR),
+		Dir: settings.MustGet(settings.ConfigDataDir),
 	}
 }
 
@@ -190,7 +190,7 @@ func (db *Database) pattern(configPath string) string {
 }
 
 func (db *Database) latestToday(configPath string, day time.Time) (string, error) {
-	var ret = []string{}
+	var ret []string
 	pattern := fmt.Sprintf("%s.%s*.dat", db.pattern(configPath), day.Format("20060102"))
 	matches, err := filepath.Glob(pattern)
 	if err == nil || len(matches) > 0 {
@@ -272,7 +272,7 @@ func findLastLine(f *os.File) (ret string, err error) {
 
 func readLineFrom(f *os.File) (string, error) {
 	r := bufio.NewReader(f)
-	ret := []byte{}
+	var ret []byte
 	for {
 		b, isPrefix, err := r.ReadLine()
 		utils.LogIgnoreErr("read line", err)
